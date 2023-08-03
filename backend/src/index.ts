@@ -1,8 +1,13 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import cors from 'cors';
-import { sampleProducts } from './data';
+import { connectDB } from './utils/connectDB';
+import { productRouter } from './routers/productRouter';
+import { seedRouter } from './routers/seedRouter';
 
 const app = express();
+
+// connect to a mongo database
+connectDB();
 
 app.use(
 	cors({
@@ -11,13 +16,8 @@ app.use(
 	})
 );
 
-app.get('/api/products', (req: Request, res: Response) => {
-	res.json(sampleProducts);
-});
-
-app.get('/api/products/:slug', (req: Request, res: Response) => {
-	res.json(sampleProducts.find((x) => x.slug === req.params.slug));
-});
+app.use('/api/products', productRouter);
+app.use('/api/seed', seedRouter);
 
 const PORT = 4000;
 app.listen(PORT, () => {
